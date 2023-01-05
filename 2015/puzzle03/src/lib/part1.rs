@@ -1,12 +1,9 @@
 use std::collections::HashSet;
-use std::{fs, env};
-
 
 #[derive(Hash, Eq, PartialEq, Debug)]
 struct Point(i32, i32);
 
-fn run(input: &str) {
-    let contents = fs::read_to_string(input).expect("cannot read file");
+pub fn run(contents: &str) {
     let mut houses = HashSet::new();
     let mut x = 0;
     let mut y = 0;
@@ -24,10 +21,4 @@ fn run(input: &str) {
     }
 
     println!("Part One: {}", houses.len())
-}
-
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let input = args.get(1).expect("file or input not provided");
-    run(&input);
 }

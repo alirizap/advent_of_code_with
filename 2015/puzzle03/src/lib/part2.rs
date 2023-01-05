@@ -1,6 +1,4 @@
 use std::collections::HashSet;
-use std::{fs, env};
-
 
 #[derive(Hash, Eq, PartialEq, Debug)]
 struct Point(i32, i32);
@@ -9,9 +7,7 @@ fn is_odd(num: usize) -> bool {
     return num % 2 != 0
 }
 
-fn run(input: &str) {
-    let contents = fs::read_to_string(input).expect("cannot read file");
-    // let contents = "^>v<".to_string();
+pub fn run(contents: &str) {
     let mut houses = HashSet::new();
     let mut santa_x = 0;
     let mut santa_y = 0;
@@ -31,10 +27,4 @@ fn run(input: &str) {
     }
 
     println!("Part Two: {}", houses.len())
-}
-
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let input = args.get(1).expect("file or input not provided");
-    run(&input);
 }
