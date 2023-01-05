@@ -1,6 +1,5 @@
 # advent_of_code_with_rust
-### run
+### run in puzzlexx folder with 
 ```console
-$ rustc 2015/p1.rs -o p1
-$ p1 <input>
+$ cargo run 
 ```

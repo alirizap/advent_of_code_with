@@ -1,4 +1,5 @@
 /inputfiles
 /bins
 /tests
-/targets
+
+target/
