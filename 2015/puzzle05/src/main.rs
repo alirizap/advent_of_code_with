@@ -5,11 +5,7 @@ fn vowels_check(word: &str) -> bool {
     let mut vowels_count = 0;
     for letter in word.chars() {
         match letter {
-            'a' => vowels_count += 1,
-            'e' => vowels_count += 1,
-            'i' => vowels_count += 1,
-            'o' => vowels_count += 1,
-            'u' => vowels_count += 1,
+            'a' | 'e' | 'i' | 'o' | 'u' => vowels_count += 1,
             _ => ()
         }
         if vowels_count >= 3 {
