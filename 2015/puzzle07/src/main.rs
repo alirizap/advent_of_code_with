@@ -65,7 +65,7 @@ fn run(lines: &Vec<&str>) {
     let result_1 = solve(&mut cache, &logics, "a");
 
     cache.clear();
-    cache.insert("b", 956);
+    cache.insert("b", result_1);
 
     let result_2 = solve(&mut cache, &logics, "a");
 
