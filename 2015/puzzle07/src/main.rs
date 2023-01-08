@@ -1,7 +1,5 @@
-#![allow(dead_code)]
-use std::fs;
 use std::collections::HashMap;
-
+use std::fs;
 
 #[derive(Debug)]
 struct BitwiseLogic {
@@ -16,7 +14,7 @@ impl BitwiseLogic {
     }
 
     fn get_op(&self) -> Option<&str> {
-        self.op.as_ref().map(|value| value.as_str())
+        self.op.as_deref()
     }
 
     fn get_rhs(&self) -> &str {
@@ -41,7 +39,11 @@ impl From<&str> for BitwiseLogic {
             rhs = Some(splited_vlaues[0].trim().to_string());
         }
 
-        BitwiseLogic {lhs: lhs, op: op, rhs: rhs}
+        BitwiseLogic {
+            lhs,
+            op,
+            rhs,
+        }
     }
 }
 
@@ -49,7 +51,7 @@ fn parse_lines(line: &str) -> (&str, BitwiseLogic) {
     let values: Vec<&str> = line.split("->").collect();
     let key = values[1].trim();
     let bitwise: BitwiseLogic = values[0].into();
-    (key, bitwise) 
+    (key, bitwise)
 }
 
 fn run(lines: &Vec<&str>) {
@@ -60,25 +62,35 @@ fn run(lines: &Vec<&str>) {
         logics.insert(key, bitwise);
     }
 
-    let result_1 = part_one(&mut cache, &logics, "a");
+    let result_1 = solve(&mut cache, &logics, "a");
+
+    cache.clear();
+    cache.insert("b", 956);
+
+    let result_2 = solve(&mut cache, &logics, "a");
 
     println!("Part One: {}", result_1);
+    println!("Part Two: {}", result_2);
 }
 
-fn part_one<'a>(cache: &mut HashMap<&'a str, u16>, logics: &'a HashMap<&'a str, BitwiseLogic>, key: &'a str) -> u16 {
+fn solve<'a>(
+    cache: &mut HashMap<&'a str, u16>,
+    logics: &'a HashMap<&'a str, BitwiseLogic>,
+    key: &'a str,
+) -> u16 {
     if let Ok(value) = key.parse::<u16>() {
-        return value;
+        value
     } else {
         match logics[key].get_op() {
-            None => { 
+            None => {
                 let v;
                 if let Some(value) = cache.get(logics[key].get_rhs()) {
                     v = *value;
                 } else {
-                    v = part_one(cache, logics, logics[key].get_rhs());
+                    v = solve(cache, logics, logics[key].get_rhs());
                     cache.insert(logics[key].get_rhs(), v);
                 }
-                return v;
+                v
             }
             Some("AND") => {
                 let v1;
@@ -87,19 +99,18 @@ fn part_one<'a>(cache: &mut HashMap<&'a str, u16>, logics: &'a HashMap<&'a str, 
                 if let Some(value) = cache.get(logics[key].get_lhs()) {
                     v1 = *value;
                 } else {
-                    v1 = part_one(cache, logics, logics[key].get_lhs());
+                    v1 = solve(cache, logics, logics[key].get_lhs());
                     cache.insert(logics[key].get_lhs(), v1);
                 }
 
                 if let Some(value) = cache.get(logics[key].get_rhs()) {
                     v2 = *value;
                 } else {
-
-                    v2 = part_one(cache, logics, logics[key].get_rhs());
+                    v2 = solve(cache, logics, logics[key].get_rhs());
                     cache.insert(logics[key].get_rhs(), v2);
                 }
 
-                return  v1 & v2;
+                v1 & v2
             }
             Some("OR") => {
                 let v1;
@@ -108,19 +119,18 @@ fn part_one<'a>(cache: &mut HashMap<&'a str, u16>, logics: &'a HashMap<&'a str, 
                 if let Some(value) = cache.get(logics[key].get_lhs()) {
                     v1 = *value;
                 } else {
-                    v1 = part_one(cache, logics, logics[key].get_lhs());
+                    v1 = solve(cache, logics, logics[key].get_lhs());
                     cache.insert(logics[key].get_lhs(), v1);
                 }
 
                 if let Some(value) = cache.get(logics[key].get_rhs()) {
                     v2 = *value;
                 } else {
-
-                    v2 = part_one(cache, logics, logics[key].get_rhs());
+                    v2 = solve(cache, logics, logics[key].get_rhs());
                     cache.insert(logics[key].get_rhs(), v2);
                 }
 
-                return  v1 | v2;
+                v1 | v2
             }
             Some("LSHIFT") => {
                 let v1;
@@ -128,11 +138,11 @@ fn part_one<'a>(cache: &mut HashMap<&'a str, u16>, logics: &'a HashMap<&'a str, 
                 if let Some(value) = cache.get(logics[key].get_lhs()) {
                     v1 = *value;
                 } else {
-                    v1 = part_one(cache, logics, logics[key].get_lhs());
+                    v1 = solve(cache, logics, logics[key].get_lhs());
                     cache.insert(logics[key].get_lhs(), v1);
                 }
                 let v2 = logics[key].get_rhs().parse::<u16>().unwrap();
-                return  v1 << v2;
+                v1 << v2
             }
             Some("RSHIFT") => {
                 let v1;
@@ -140,21 +150,21 @@ fn part_one<'a>(cache: &mut HashMap<&'a str, u16>, logics: &'a HashMap<&'a str, 
                 if let Some(value) = cache.get(logics[key].get_lhs()) {
                     v1 = *value;
                 } else {
-                    v1 = part_one(cache, logics, logics[key].get_lhs());
+                    v1 = solve(cache, logics, logics[key].get_lhs());
                     cache.insert(logics[key].get_lhs(), v1);
                 }
                 let v2 = logics[key].get_rhs().parse::<u16>().unwrap();
-                return  v1 >> v2;
+                v1 >> v2
             }
             Some("NOT") => {
                 let v;
                 if let Some(value) = cache.get(logics[key].get_rhs()) {
                     v = *value;
                 } else {
-                    v = part_one(cache, logics, logics[key].get_rhs());
+                    v = solve(cache, logics, logics[key].get_rhs());
                     cache.insert(logics[key].get_rhs(), v);
                 }
-                return 65535 - v;
+                !v
             }
             Some(_) => unreachable!(),
         }
@@ -162,11 +172,8 @@ fn part_one<'a>(cache: &mut HashMap<&'a str, u16>, logics: &'a HashMap<&'a str, 
 }
 
 fn main() {
-    let contents = fs::read_to_string("7")
-        .expect("can not read file 7");
-    let lines: Vec<&str> = contents.split('\n')
-        .map(|line| line.trim())
-        .collect();
+    let contents = fs::read_to_string("7").expect("can not read file 7");
+    let lines: Vec<&str> = contents.split('\n').map(|line| line.trim()).collect();
 
     run(&lines);
 }
