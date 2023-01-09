@@ -92,9 +92,10 @@ fn solve<'a>(
                 }
                 v
             }
-            Some("AND") => {
+            op @ Some("AND") | op @ Some("OR") => {
                 let v1;
                 let v2;
+                let op = op.unwrap();
 
                 if let Some(value) = cache.get(logics[key].get_lhs()) {
                     v1 = *value;
@@ -109,31 +110,16 @@ fn solve<'a>(
                     v2 = solve(cache, logics, logics[key].get_rhs());
                     cache.insert(logics[key].get_rhs(), v2);
                 }
-
-                v1 & v2
-            }
-            Some("OR") => {
-                let v1;
-                let v2;
-
-                if let Some(value) = cache.get(logics[key].get_lhs()) {
-                    v1 = *value;
-                } else {
-                    v1 = solve(cache, logics, logics[key].get_lhs());
-                    cache.insert(logics[key].get_lhs(), v1);
+                match op {
+                    "AND" =>  v1 & v2,
+                    "OR" =>  v1 | v2,
+                    _ => unreachable!()
                 }
-
-                if let Some(value) = cache.get(logics[key].get_rhs()) {
-                    v2 = *value;
-                } else {
-                    v2 = solve(cache, logics, logics[key].get_rhs());
-                    cache.insert(logics[key].get_rhs(), v2);
-                }
-
-                v1 | v2
             }
-            Some("LSHIFT") => {
+            
+            op @ Some("LSHIFT") | op @ Some("RSHIFT") => {
                 let v1;
+                let op = op.unwrap();
 
                 if let Some(value) = cache.get(logics[key].get_lhs()) {
                     v1 = *value;
@@ -142,19 +128,11 @@ fn solve<'a>(
                     cache.insert(logics[key].get_lhs(), v1);
                 }
                 let v2 = logics[key].get_rhs().parse::<u16>().unwrap();
-                v1 << v2
-            }
-            Some("RSHIFT") => {
-                let v1;
-
-                if let Some(value) = cache.get(logics[key].get_lhs()) {
-                    v1 = *value;
-                } else {
-                    v1 = solve(cache, logics, logics[key].get_lhs());
-                    cache.insert(logics[key].get_lhs(), v1);
+                match op {
+                    "LSHIFT" => v1 << v2,
+                    "RSHIFT" => v1 >> v2,
+                    _ => unreachable!(),
                 }
-                let v2 = logics[key].get_rhs().parse::<u16>().unwrap();
-                v1 >> v2
             }
             Some("NOT") => {
                 let v;
