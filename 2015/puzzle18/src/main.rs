@@ -81,8 +81,7 @@ fn lights_on(lines: &[String], part_two: bool) -> i32 {
             new_grid.insert(Point(99, 99), State::On);
         }
         i += 1;
-        grid.clear();
-        grid = new_grid.iter().map(|(k, v)| (*k, *v)).collect();
+        grid = new_grid;
     }
 
     let mut count_on = 0;
