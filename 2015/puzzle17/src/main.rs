@@ -1,4 +1,5 @@
 use std::ops::AddAssign;
+use std::iter::{Iterator, Sum};
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Container(i32);
@@ -8,6 +9,16 @@ type Combination = Vec<Container>;
 impl AddAssign for Container {
     fn add_assign(&mut self, other: Self) {
         *self = Container(self.0 + other.0);
+    }
+}
+
+impl Sum for Container {
+    fn sum<I: Iterator<Item=Self>>(iter: I) -> Self {
+        let mut container = Container(0);
+        for c in iter {
+            container += c;
+        }
+        container
     }
 }
 
@@ -65,11 +76,8 @@ fn run(lines: Vec<String>) {
     for i in 1..arr.len() {
         let mut combs: Vec<Combination> = vec![];
         combination(&arr, arr.len(), i, 0, &mut data, 0, &mut combs);
-        for comb in combs.iter() {
-            let mut sum = Container::default();
-            for c in comb {
-                sum += *c;
-            }
+        for comb in combs.into_iter() {
+            let sum: Container = comb.into_iter().sum();
             if sum == target {
                 count += 1;
                 if i <= minmum_containers {
