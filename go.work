@@ -1,0 +1,7 @@
+go 1.20
+
+use (
+	./2015/puzzle21
+	./2015/puzzle22
+	./2015/puzzle23
+)
