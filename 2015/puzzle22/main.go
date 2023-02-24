@@ -1,3 +1,4 @@
+// Original solution https://github.com/arnokamphuis/AdventOfCode/blob/master/2015/day22/src/day22_15.rs
 package main
 
 import "fmt"
