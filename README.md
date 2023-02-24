@@ -1,2 +1,2 @@
-# advent_of_code_with
+# advent_of_code
 ### solve advent of code puzzles
