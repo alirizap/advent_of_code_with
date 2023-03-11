@@ -1,2 +1,2 @@
-# Code Puzzles
-### solve code puzzles and algorithm problems
+# Programming Problems
+### solve programming puzzles and algorithm problems
