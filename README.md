@@ -1,2 +1,2 @@
-# advent_of_code
-### solve advent of code puzzles
+# Code Puzzles
+### solve code puzzles and algorithm problems
